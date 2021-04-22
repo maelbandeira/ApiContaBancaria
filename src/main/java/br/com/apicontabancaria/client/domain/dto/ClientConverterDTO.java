@@ -1,6 +1,7 @@
 package br.com.apicontabancaria.client.domain.dto;
 
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -28,5 +29,6 @@ public class ClientConverterDTO {
 	public static List<ClientDTO> conveterListClients(List<Client> clients) {
 		return clients.stream().map(c -> modelMapper().map(c, ClientDTO.class)).collect(Collectors.toList());
 	}
+	
 
 }

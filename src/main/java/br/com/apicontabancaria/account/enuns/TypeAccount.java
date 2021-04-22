@@ -2,6 +2,7 @@ package br.com.apicontabancaria.account.enuns;
 
 public enum TypeAccount {
 
-	CurrentAccount,
-	SavingsAccount;
+	CURRENT_ACCOUNT,
+	
+	SAVINGS_ACCOUNT;
 }

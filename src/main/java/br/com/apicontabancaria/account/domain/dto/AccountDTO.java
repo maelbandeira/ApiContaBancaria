@@ -17,12 +17,13 @@ import lombok.Setter;
 
 public class AccountDTO {
 	
-	private ClientDTO client;
+	private ClientDTO clientDTO;
 	
-	private String agency;
+	
+	private int agency;
 	
 
-	private String accountNumber;
+	private int accountNumber;
 	
 	
 	private Double balance;

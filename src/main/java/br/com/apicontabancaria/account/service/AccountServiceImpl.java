@@ -9,32 +9,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.apicontabancaria.account.domain.Account;
+import br.com.apicontabancaria.account.domain.dto.AccountDTO;
 import br.com.apicontabancaria.account.repository.AccountRepository;
-import br.com.apicontabancaria.client.service.ClientService;
-import lombok.RequiredArgsConstructor;
+import br.com.apicontabancaria.client.domain.Client;
+import br.com.apicontabancaria.client.service.ClientServiceImpl;
 
 
 @Service
-@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
 	
 	@Autowired
-	private final ClientService clientService;
-	@Autowired
-	private final AccountRepository accountRepository;
+	private  AccountRepository accountRepository;	
 	
+	@Autowired
+	private ClientServiceImpl clientServiceImpl;
 
-	@Override
+	@Override	
 	public Account create(Account account) {
+		account.setClient(clientServiceImpl.getById(account.getClient().getId()).get());
 		return this.accountRepository.save(account);
 	}
 	
 
 	@Override
-	public void removeByNumberAccount(Long numberAccount) throws Exception {
-		Account account = this.accountRepository.findByNumberAccount(numberAccount).get();
+	public void removeAccount(Long id) throws Exception {
+		Account account = this.accountRepository.findById(id).get();
 		if(account !=null) {
-			this.accountRepository.delete(account);
+			this.accountRepository.deleteById(id);
 		}
 		throw new Exception("Account not found !!");		
 	}
@@ -46,19 +47,15 @@ public class AccountServiceImpl implements AccountService{
 
 	
 	@Override
-	public Optional<Account> getByNumberAccount(Long numberAccount) {
-		return this.accountRepository.findByNumberAccount(numberAccount);
+	public Optional<Account> getByNumberAccount(int numberAccount) {
+		return this.accountRepository.findByAccountNumber(numberAccount);
 	}
-
-
-	public ClientService getClientService() {
-		return this.clientService;
-	}
+	
 	
 	@Transactional(rollbackOn = Exception.class) // se caso der erro na transação
 	public void withdrawMoney(Account account, double value) throws Exception{
 		if(account.getBalance()< value) {
-			throw new Exception("Account not found !!");
+			throw new Exception("Balance not found !!");
 		}
 		account.setBalance(account.getBalance()- value);
 		 this.accountRepository.save(account);
@@ -74,18 +71,14 @@ public class AccountServiceImpl implements AccountService{
 
 
 	@Override
-	public void transferMoney(Account accountOrigin, Account accountDestiny, double value) throws Exception {
-		
-		//Transação de saída
-		if (accountOrigin.getBalance() < value) {
-			throw new Exception("Balance not found !!");
-		}	
-		accountOrigin.setBalance(accountOrigin.getBalance() - value);
-		this.accountRepository.save(accountOrigin);
-		
-				
-		//Transferênica de entrada
-		accountDestiny.setBalance(accountDestiny.getBalance() + value);
-		this.accountRepository.save(accountDestiny);
+	public void transferMoney(Account accountOrigin, Account accountDestiny, double value) throws Exception {			
+		withdrawMoney(accountOrigin, value);		
+		depositMoney(accountDestiny, value);	
+	}
+	
+
+	@Override
+	public Optional<Account> getAccountById(Long id) {
+		return this.accountRepository.findById(id);
 	}
 }

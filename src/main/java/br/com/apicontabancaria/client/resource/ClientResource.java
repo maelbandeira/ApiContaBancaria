@@ -77,4 +77,5 @@ public class ClientResource {
 		return ResponseEntity.ok(ClientConverterDTO.conveterListClients(this.service.getAll()));
 	}
 
+	
 }
