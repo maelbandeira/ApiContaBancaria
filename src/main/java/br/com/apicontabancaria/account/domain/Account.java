@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import br.com.apicontabancaria.account.enuns.TypeAccount;
 import br.com.apicontabancaria.client.domain.Client;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "tb_account")
+@CrossOrigin(origins="*")
 public class Account implements Serializable{
 
 	/**
